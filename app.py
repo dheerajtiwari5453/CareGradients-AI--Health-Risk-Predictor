@@ -162,7 +162,7 @@ if portal_view == "🖥️ Individual Diagnostic Suite":
         st.markdown("#### 💾 Save or Export Assessment")
         
         with st.form("registry_form", clear_on_submit=False):
-            pat_name = st.text_input("Patient Name", placeholder="e.g. John Doe")
+            pat_name = st.text_input("Patient Name", placeholder="e.g. Dheeraj Tiwari")
             pat_id = st.text_input("Patient ID / HRN", placeholder="e.g. PT-9824")
             submit_btn = st.form_submit_button("Save & Generate Report")
             
