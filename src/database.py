@@ -288,4 +288,3 @@ def update_user_role(user_id: int, new_role: str, db_path: Path = DB_FILE) -> No
     cursor.execute("UPDATE users SET role = ? WHERE id = ?", (new_role, int(user_id)))
     conn.commit()
     conn.close()
-
