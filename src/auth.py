@@ -15,7 +15,7 @@ from email.mime.multipart import MIMEMultipart
 import streamlit as st
 
 from src.database import (
-    init_users_db,
+    #init_users_db,
     create_user,
     get_user_by_username,
     get_user_by_email,
@@ -249,6 +249,7 @@ def render_login_page() -> None:
     _inject_auth_styles()
 
     # Ensure users table exists
+    from src.database import init_users_db
     init_users_db()
 
     # Header
