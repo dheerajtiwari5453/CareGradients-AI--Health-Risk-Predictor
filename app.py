@@ -607,8 +607,7 @@ with footer_col3:
 st.markdown(
     """
     <div class="footer-bottom-bar">
-        © 2024 — <span>CareGradients AI</span> · Built with ❤️ by Dheeraj Tiwari
-        · Powered by Streamlit & XGBoost
+        © 2026 — <span>CareGradients AI</span> · Built by Dheeraj Tiwari
     </div>
     """,
     unsafe_allow_html=True
