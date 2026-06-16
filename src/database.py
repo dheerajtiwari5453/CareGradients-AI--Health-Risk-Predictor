@@ -173,8 +173,7 @@ def init_users_db(db_path: Path = DB_FILE) -> None:
     )
     conn.commit()
     
-    cursor.execute("DELETE FROM users WHERE username = 'admin'")
-    conn.commit()
+     
     
     # Seed default admin if the table is empty
     cursor.execute("SELECT COUNT(*) FROM users WHERE role = 'admin'")
