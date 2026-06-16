@@ -22,9 +22,16 @@ from src.explainers import run_sensitivity_analysis, generate_sensitivity_plot
 from src.visualizations import generate_radar_chart
 from src.reports import generate_html_report
 from src.database import save_record, load_records, delete_record, init_db
+from src.auth import require_auth, render_logout_button
 
 # Initialize custom CSS styles
 apply_custom_styles()
+
+# ==========================================
+# AUTHENTICATION GATE
+# ==========================================
+# This call blocks all further rendering until the user has signed in.
+require_auth()
 
 @st.cache_resource
 def get_prediction_pipeline():
@@ -60,7 +67,8 @@ portal_view = st.sidebar.radio(
     ]
 )
 
-st.sidebar.markdown("---")
+# Logout button at the bottom of the sidebar
+render_logout_button()
 
 # ==========================================
 # PORTAL 1: INDIVIDUAL DIAGNOSTIC SUITE
@@ -72,9 +80,9 @@ if portal_view == "🖥️ Individual Diagnostic Suite":
     
     # Sidebar clinical inputs
     st.sidebar.markdown("### 👤 Demographics & Vitals")
-    age = st.sidebar.slider("Age (years)", 18, 90, 45)
+    age = st.sidebar.slider("Age (years)", 18, 90, 22)
     gender = st.sidebar.selectbox("Assigned Gender at Birth", ["Female", "Male"])
-    BMI = st.sidebar.slider("Body Mass Index (BMI)", 15.0, 45.0, 26.5, step=0.1)
+    BMI = st.sidebar.slider("Body Mass Index (BMI)", 15.0, 45.0, 20.5, step=0.1)
     
     systolic_bp = st.sidebar.slider("Systolic BP (mmHg)", 90, 200, 120)
     diastolic_bp = st.sidebar.slider("Diastolic BP (mmHg)", 60, 120, 80)
@@ -487,3 +495,121 @@ elif portal_view == "📘 Targets & Guidelines":
             * **Obese**: `30.0` or higher.
             """
         )
+
+# ==========================================
+# GLOBAL FOOTER: ABOUT, FEEDBACK & SUPPORT
+# ==========================================
+st.markdown('<hr class="footer-divider">', unsafe_allow_html=True)
+
+footer_col1, footer_col2, footer_col3 = st.columns(3)
+
+# --- ABOUT SECTION ---
+with footer_col1:
+    st.markdown(
+        """
+        <div class="footer-section">
+            <div class="footer-section-title">ℹ️ About CareGradients AI</div>
+            <div class="footer-text">
+                <strong>CareGradients AI</strong> is a clinical-grade health risk intelligence platform
+                that leverages optimized <strong>XGBoost machine learning classifiers</strong> to deliver
+                real-time risk assessments across three critical domains — <strong>Cardiovascular Disease</strong>,
+                <strong>Diabetes</strong>, and <strong>Stroke</strong>.
+                <br><br>
+                Designed for healthcare professionals and clinical educators, the platform combines
+                interactive sensitivity-based explainability, comparative delta diagnostics,
+                batch population analytics, and a secure patient registry — all wrapped in a modern,
+                glassmorphic clinical dashboard.
+            </div>
+            <div class="about-features">
+                <div class="about-feature-chip">🧠 XGBoost Classifiers</div>
+                <div class="about-feature-chip">📊 Sensitivity Analysis</div>
+                <div class="about-feature-chip">⚖️ Delta Comparator</div>
+                <div class="about-feature-chip">🗃️ SQLite Registry</div>
+                <div class="about-feature-chip">📄 Report Generator</div>
+                <div class="about-feature-chip">📈 Batch Predictions</div>
+            </div>
+            <div class="developer-badge">👨‍💻 Developed by Dheeraj Tiwari</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+# --- FEEDBACK SECTION ---
+with footer_col2:
+    st.markdown(
+        '<div class="footer-section"><div class="footer-section-title">💬 Share Your Feedback</div>'
+        '<div class="footer-text">Your feedback helps improve CareGradients AI. '
+        'Share your thoughts on accuracy, usability, or suggest new features.</div></div>',
+        unsafe_allow_html=True
+    )
+    with st.form("feedback_form", clear_on_submit=True):
+        fb_name = st.text_input("Your Name", placeholder="e.g. Dheeraj Tiwari", key="fb_name")
+        fb_role = st.selectbox(
+            "Your Role",
+            ["Clinician / Physician", "Medical Student", "Researcher", "Health Educator", "Other"],
+            key="fb_role"
+        )
+        fb_rating = st.slider("Overall Experience", 1, 5, 4, key="fb_rating",
+                               help="1 = Poor, 5 = Excellent")
+        fb_message = st.text_area(
+            "Your Feedback",
+            placeholder="What did you like? What could be improved?",
+            max_chars=500,
+            key="fb_message"
+        )
+        fb_submit = st.form_submit_button("📨 Submit Feedback", use_container_width=True)
+
+        if fb_submit:
+            if not fb_message.strip():
+                st.warning("Please write some feedback before submitting.")
+            else:
+                st.session_state["feedback_submitted"] = True
+
+    if st.session_state.get("feedback_submitted", False):
+        st.markdown(
+            '<div class="feedback-success">✅ Thank you for your feedback! '
+            'Your input is invaluable in improving CareGradients AI.</div>',
+            unsafe_allow_html=True
+        )
+        st.session_state["feedback_submitted"] = False
+
+# --- SUPPORT SECTION ---
+with footer_col3:
+    st.markdown(
+        """
+        <div class="footer-section">
+            <div class="footer-section-title">🛟 Support & Contact</div>
+            <div class="footer-text">
+                Need help getting started, have a bug to report, or want to collaborate?
+                Reach out through the channels below.
+                <br><br>
+                <strong>🩺 Technical Support</strong><br>
+                For issues related to predictions, batch uploads, or the clinical registry,
+                please include your browser console logs and a description of the problem.
+                <br><br>
+                <strong>💡 Feature Requests</strong><br>
+                Have ideas for new risk models, visualization improvements, or integration needs?
+                We'd love to hear from you.
+                <br><br>
+                <strong>🤝 Collaboration</strong><br>
+                Open to partnerships with healthcare institutions, research labs,
+                and medical education programs.
+            </div>
+            <a href="mailto:dheerajtiwari.pandit@gmail.com" class="support-link" style="text-decoration: none;">
+                ✉️ dheerajtiwari.pandit@gmail.com
+            </a>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+# --- COPYRIGHT BAR ---
+st.markdown(
+    """
+    <div class="footer-bottom-bar">
+        © 2024 — <span>CareGradients AI</span> · Built with ❤️ by Dheeraj Tiwari
+        · Powered by Streamlit & XGBoost
+    </div>
+    """,
+    unsafe_allow_html=True
+)

@@ -144,4 +144,148 @@ def delete_record(record_id: int, db_path: Path = DB_FILE) -> None:
     conn.close()
 
 
+# ==========================================
+# USER MANAGEMENT DATABASE LAYER
+# ==========================================
+
+def init_users_db(db_path: Path = DB_FILE) -> None:
+    """Create the ``users`` table if it does not exist and seed the default admin account.
+
+    The admin account uses the same credentials as the legacy ``secrets.toml`` entry:
+    username ``admin``, password ``CareGradients@2024``.
+    """
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            full_name TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            role TEXT NOT NULL DEFAULT 'user',
+            verified INTEGER NOT NULL DEFAULT 1,
+            created_at DATETIME NOT NULL,
+            last_login DATETIME
+        )
+        """
+    )
+    conn.commit()
+
+    # Seed default admin if the table is empty
+    cursor.execute("SELECT COUNT(*) FROM users WHERE role = 'admin'")
+    admin_count = cursor.fetchone()[0]
+    if admin_count == 0:
+        import hashlib
+        admin_hash = hashlib.sha256("CareGradients@2024".encode()).hexdigest()
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        cursor.execute(
+            """
+            INSERT OR IGNORE INTO users (username, full_name, email, password_hash, role, verified, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            ("admin", "Administrator", "dheerajtiwari.pandit@gmail.com", admin_hash, "admin", 1, now),
+        )
+        conn.commit()
+    conn.close()
+
+
+def create_user(
+    username: str,
+    full_name: str,
+    email: str,
+    password_hash: str,
+    role: str = "user",
+    db_path: Path = DB_FILE,
+) -> bool:
+    """Insert a new verified user into the ``users`` table.
+
+    Returns True on success, False if the username or email already exists.
+    """
+    init_users_db(db_path)
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    try:
+        cursor.execute(
+            """
+            INSERT INTO users (username, full_name, email, password_hash, role, verified, created_at)
+            VALUES (?, ?, ?, ?, ?, 1, ?)
+            """,
+            (username, full_name, email, password_hash, role, now),
+        )
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError:
+        return False
+    finally:
+        conn.close()
+
+
+def get_user_by_username(username: str, db_path: Path = DB_FILE) -> dict | None:
+    """Return the user row as a dict, or None if not found."""
+    init_users_db(db_path)
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
+    row = cursor.fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def get_user_by_email(email: str, db_path: Path = DB_FILE) -> dict | None:
+    """Return the user row as a dict, or None if not found."""
+    init_users_db(db_path)
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
+    row = cursor.fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def get_all_users(db_path: Path = DB_FILE) -> pd.DataFrame:
+    """Return all users as a DataFrame for the admin panel."""
+    init_users_db(db_path)
+    conn = sqlite3.connect(db_path)
+    df = pd.read_sql_query(
+        "SELECT id, username, full_name, email, role, created_at, last_login FROM users ORDER BY created_at DESC",
+        conn,
+    )
+    conn.close()
+    return df
+
+
+def delete_user(user_id: int, db_path: Path = DB_FILE) -> None:
+    """Delete a user by their primary key ``id``."""
+    init_users_db(db_path)
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM users WHERE id = ? AND role != 'admin'", (int(user_id),))
+    conn.commit()
+    conn.close()
+
+
+def update_last_login(username: str, db_path: Path = DB_FILE) -> None:
+    """Set the ``last_login`` timestamp for the given user."""
+    init_users_db(db_path)
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    cursor.execute("UPDATE users SET last_login = ? WHERE username = ?", (now, username))
+    conn.commit()
+    conn.close()
+
+
+def update_user_role(user_id: int, new_role: str, db_path: Path = DB_FILE) -> None:
+    """Change a user's role (e.g. 'user' → 'admin' or vice versa)."""
+    init_users_db(db_path)
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute("UPDATE users SET role = ? WHERE id = ?", (new_role, int(user_id)))
+    conn.commit()
+    conn.close()
 

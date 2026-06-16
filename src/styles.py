@@ -194,6 +194,196 @@ def apply_custom_styles():
             border-color: #2563eb !important;
             font-weight: 600;
         }
+        /* ==========================================
+           FOOTER: About, Feedback & Support
+           ========================================== */
+        .footer-divider {
+            border: none;
+            border-top: 1px solid #1e293b;
+            margin: 60px 0 40px 0;
+        }
+
+        .footer-section {
+            background: linear-gradient(145deg, #131c31 0%, #0f172a 100%);
+            border: 1px solid #1e293b;
+            border-radius: 16px;
+            padding: 28px 32px;
+            margin-bottom: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .footer-section:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.08);
+        }
+
+        .footer-section-title {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6366f1, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.5px;
+            margin-bottom: 14px;
+        }
+
+        .footer-text {
+            font-size: 14px;
+            color: #94a3b8;
+            line-height: 1.7;
+        }
+
+        .footer-text strong {
+            color: #e2e8f0;
+        }
+
+        .about-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .about-feature-chip {
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #a78bfa;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .about-feature-chip:hover {
+            background: rgba(99, 102, 241, 0.15);
+            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .developer-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 30px;
+            padding: 6px 16px;
+            font-size: 13px;
+            color: #38bdf8;
+            font-weight: 600;
+            margin-top: 14px;
+        }
+
+        .support-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(46, 196, 182, 0.08);
+            border: 1px solid rgba(46, 196, 182, 0.2);
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-size: 14px;
+            color: #2ec4b6;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .support-link:hover {
+            background: rgba(46, 196, 182, 0.15);
+            border-color: rgba(46, 196, 182, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .footer-bottom-bar {
+            text-align: center;
+            padding: 20px 0 10px 0;
+            color: #475569;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        .footer-bottom-bar span {
+            background: linear-gradient(135deg, #6366f1, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+        }
+
+        .feedback-success {
+            background: rgba(46, 196, 182, 0.1);
+            border: 1px solid rgba(46, 196, 182, 0.3);
+            border-radius: 12px;
+            padding: 14px 20px;
+            color: #2ec4b6;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        /* ==========================================
+           ADMIN PANEL
+           ========================================== */
+        .admin-stat-card {
+            background: linear-gradient(145deg, #131c31 0%, #0f172a 100%);
+            border: 1px solid #1e293b;
+            border-radius: 14px;
+            padding: 22px 20px;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .admin-stat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.1);
+        }
+
+        .admin-stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 6px 0;
+        }
+
+        .admin-stat-label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .role-badge-admin {
+            display: inline-block;
+            background: rgba(239, 68, 68, 0.12);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .role-badge-user {
+            display: inline-block;
+            background: rgba(56, 189, 248, 0.12);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
         </style>
         """,
         unsafe_allow_html=True
