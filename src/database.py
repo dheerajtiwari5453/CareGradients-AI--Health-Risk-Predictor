@@ -152,7 +152,7 @@ def init_users_db(db_path: Path = DB_FILE) -> None:
     """Create the ``users`` table if it does not exist and seed the default admin account.
 
     The admin account uses the same credentials as the legacy ``secrets.toml`` entry:
-    username ``admin``, password ``CareGradients@2026``.
+    username ``admin``, password ``16061119``.
     """
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -178,7 +178,7 @@ def init_users_db(db_path: Path = DB_FILE) -> None:
     admin_count = cursor.fetchone()[0]
     if admin_count == 0:
         import hashlib
-        admin_hash = hashlib.sha256("CareGradients@2026".encode()).hexdigest()
+        admin_hash = hashlib.sha256("16061119".encode()).hexdigest()
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         cursor.execute(
             """
