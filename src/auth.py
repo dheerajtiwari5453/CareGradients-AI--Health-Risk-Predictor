@@ -288,7 +288,7 @@ def render_login_page() -> None:
             unsafe_allow_html=True,
         )
         st.markdown(
-            '<p class="auth-footer-2">    Made by Dheeraj.</p>',
+            '<p class="auth-footer-2"> Made by Dheeraj.</p>',
             unsafe_allow_html=True,
         )
 
