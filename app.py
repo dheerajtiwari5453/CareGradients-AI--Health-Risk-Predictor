@@ -395,7 +395,7 @@ elif portal_view == "📊 Batch Processing Portal":
                         cohort_df["Stroke_Risk_Pct"] = stroke_list
                         cohort_df["Composite_Risk_Index"] = composite_list
                         
-                        st.subheader("Processed Patient Grid (Preview)")
+                        st.subheader("Processed Patient Grid (Preview)")    
                         st.dataframe(cohort_df.head(10))
                         
                         # Download results CSV

@@ -38,7 +38,7 @@ def _generate_otp() -> str:
 
 
 def _send_otp_email(recipient_email: str, otp_code: str) -> bool:
-    """Send an OTP verification email via Gmail SMTP.
+    """Send an OTP verification email via SMTP.
 
     Returns True on success, False on failure.
     SMTP credentials are read from st.secrets["email"].
@@ -48,10 +48,11 @@ def _send_otp_email(recipient_email: str, otp_code: str) -> bool:
         smtp_server = email_cfg.get("smtp_server", "smtp.gmail.com")
         smtp_port = int(email_cfg.get("smtp_port", 587))
         sender_email = email_cfg.get("sender_email", "")
+        smtp_username = email_cfg.get("smtp_username", sender_email)
         app_password = email_cfg.get("app_password", "")
 
         if not sender_email or not app_password:
-            st.error("⚠️ Email SMTP not configured. Please set up `.streamlit/secrets.toml` with your Gmail App Password.")
+            st.error("⚠️ Email SMTP not configured. Please set up `.streamlit/secrets.toml` with your SMTP Key.")
             return False
 
         # Build the email
@@ -83,7 +84,7 @@ def _send_otp_email(recipient_email: str, otp_code: str) -> bool:
             <div style="text-align: center; margin-top: 24px; padding-top: 16px;
                         border-top: 1px solid #1e293b;">
                 <p style="color: #475569; font-size: 11px; margin: 0;">
-                    © 2024 CareGradients AI · Built by Dheeraj Tiwari
+                    © 2026 CareGradients AI · Built by Dheeraj Tiwari
                 </p>
             </div>
         </div>
@@ -100,13 +101,13 @@ def _send_otp_email(recipient_email: str, otp_code: str) -> bool:
             server.ehlo()
             server.starttls(context=context)
             server.ehlo()
-            server.login(sender_email, app_password)
+            server.login(smtp_username, app_password)
             server.sendmail(sender_email, recipient_email, msg.as_string())
 
         return True
 
     except smtplib.SMTPAuthenticationError:
-        st.error("❌ SMTP Authentication failed. Please check your Gmail App Password in `secrets.toml`.")
+        st.error("❌ SMTP Authentication failed. Please check your SMTP credentials in `secrets.toml`.")
         return False
     except Exception as e:
         st.error(f"❌ Failed to send OTP email. Error: {e}")
