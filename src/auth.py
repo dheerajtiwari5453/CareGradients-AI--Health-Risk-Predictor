@@ -386,6 +386,9 @@ def _render_otp_verification():
         <div class="otp-display">
             <div class="otp-label">A 6-digit verification code has been sent to:</div>
             <div class="otp-email-highlight">✉️ {email}</div>
+            <div style="color: #64748b; font-size: 12px; margin-top: 8px;">
+                <em>(If the OTP is not showing in your inbox, kindly check your SPAM folder)</em>
+            </div>
         </div>
         """,
         unsafe_allow_html=True,
