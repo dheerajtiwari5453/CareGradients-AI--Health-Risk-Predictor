@@ -37,7 +37,7 @@ def _generate_otp() -> str:
     return str(random.randint(100000, 999999))
 
 
-def _send_otp_email(recipient_email: str, otp_code: str) -> bool:
+def _send_otp_email(recipient_email: str, otp_code: str, username: str = "User") -> bool:
     """Send an OTP verification email via SMTP.
 
     Returns True on success, False on failure.
@@ -72,6 +72,9 @@ def _send_otp_email(recipient_email: str, otp_code: str) -> bool:
                            font-size: 24px;">CareGradients AI</h2>
                 <p style="color: #64748b; font-size: 13px; margin: 0;">Clinical Decision Support Engine</p>
             </div>
+            <div style="margin-bottom: 20px; text-align: center;">
+                <p style="color: #e2e8f0; font-size: 16px; margin: 0;">Hello <strong>{username}</strong>,</p>
+            </div>
             <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.2);
                         border-radius: 12px; padding: 24px; text-align: center; margin: 20px 0;">
                 <p style="color: #94a3b8; font-size: 14px; margin: 0 0 12px 0;">Your verification code is:</p>
@@ -90,7 +93,7 @@ def _send_otp_email(recipient_email: str, otp_code: str) -> bool:
         </div>
         """
 
-        plain_text = f"Your CareGradients AI verification code is: {otp_code}. This code expires in 10 minutes."
+        plain_text = f"Hello {username},\n\nYour CareGradients AI verification code is: {otp_code}. This code expires in 10 minutes."
 
         msg.attach(MIMEText(plain_text, "plain"))
         msg.attach(MIMEText(html_body, "html"))
@@ -361,7 +364,7 @@ def _render_register_form():
 
             # Generate and send OTP
             otp = _generate_otp()
-            sent = _send_otp_email(reg_email.strip(), otp)
+            sent = _send_otp_email(reg_email.strip(), otp, reg_user.strip())
 
             if sent:
                 # Store registration data in session for OTP step
@@ -380,6 +383,7 @@ def _render_otp_verification():
     """Render the OTP verification step (Step 2)."""
     reg_data = st.session_state.get("reg_data", {})
     email = reg_data.get("email", "")
+    username = reg_data.get("username", "User")
 
     st.markdown(
         f"""
@@ -445,7 +449,7 @@ def _render_otp_verification():
     # Resend OTP button (outside the form)
     if st.button("🔄 Resend OTP", use_container_width=True):
         new_otp = _generate_otp()
-        sent = _send_otp_email(email, new_otp)
+        sent = _send_otp_email(email, new_otp, username)
         if sent:
             st.session_state["otp_code"] = new_otp
             st.success("✅ New OTP sent! Check your inbox.")
